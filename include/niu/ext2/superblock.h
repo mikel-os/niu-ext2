@@ -1,11 +1,19 @@
+/*!	@file niu/ext2/superblock.h
+	@author Mikel Cazorla Pérez
+	@date 2015/12/22
+*/
+
 /* TODO: These defines and typedefs musn't be here. */
 /* TODO: Erase comment when as needed */
 
-/* This structure can be padded out by the compiler. It's here to
-   facilitate the task and reduce the likelihood of errors, must first be
-   filled entirelly, then used, and finally flushed again to the format.
+/*!	@struct niu_ext2_superblock
 
-   Don't forget the superblock is little-endian.
+	This structure can be padded out by the compiler.
+	It's here to facilitate the task and reduce the likelihood of
+	errors, must first be filled entirelly, then used, and finally
+	flushed again to the format.
+
+	Don't forget the superblock is little-endian.
 */
 
 struct niu_ext2_superblock
@@ -37,5 +45,17 @@ struct niu_ext2_superblock
 	ushort   s_def_resgid;
 };
 
-int niu_ext2_get_superblock(struct niu_ext2_superblock *, uchar *mem);
+/*!	@brief Fills a struct that represents a superblock from one located
+	in the memory address space.
+
+	Note the struct can be modified even on error.
+
+	@param mem The address of a source superblock in memory.
+	@param niu_ext2_superblock A pointer to the superblock struct
+	expected to be filled.
+
+	@returns On error returns a negative number.
+*/
+
+int niu_ext2_get_superblock(struct niu_ext2_superblock *, uchar const *mem);
 

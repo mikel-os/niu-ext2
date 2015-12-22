@@ -12,7 +12,7 @@
 
 static
 uint16_t
-getfield16(uchar **mem)
+getfield16(uchar const **mem)
 {
 	uint16_t field;
 
@@ -24,7 +24,7 @@ getfield16(uchar **mem)
 
 static
 uint32_t
-getfield32(uchar **mem)
+getfield32(uchar const **mem)
 {
 	uint32_t field;
 
@@ -35,10 +35,10 @@ getfield32(uchar **mem)
 }
 
 int
-niu_ext2_get_superblock(struct niu_ext2_superblock *block, uchar *mem)
+niu_ext2_get_superblock(struct niu_ext2_superblock *block, uchar const *mem)
 {
-	if(block == nil) return 1;
-	if(mem == nil) return 1;
+	if(block == nil) return -1;
+	if(mem == nil) return -1;
 
 	block->s_inodes_count = getfield32(&mem);
 	block->s_blocks_count = getfield32(&mem);
@@ -69,5 +69,5 @@ niu_ext2_get_superblock(struct niu_ext2_superblock *block, uchar *mem)
 	block->s_def_resuid = getfield16(&mem);
 	block->s_def_resgid = getfield16(&mem);
 
-	return 1;
+	return -1;
 }
