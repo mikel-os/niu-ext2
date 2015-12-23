@@ -9,6 +9,7 @@ TARGETS_NAMES=ext2.elf
 OBJS_NAMES=main superblock
 FILE=filedumps/superblocks/sfa
 DEBUG=-g
+CFLAGS=-Wall -Wextra
 
 INCLUDE=./include
 OBJ=./obj
@@ -40,8 +41,8 @@ debug: $(TARGET_DIR)/ext2.elf
 .PHONY: run debug
 
 $(TARGET_DIR)/ext2.elf: $(OBJS)
-	$(CC) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(OBJ)/%.o: ./src/%.c
-	$(CC) -c $(DEBUG) -I$(INCLUDE) -o $@ $<
+	$(CC) -c $(CFLAGS) $(DEBUG) -I$(INCLUDE) -o $@ $<
 

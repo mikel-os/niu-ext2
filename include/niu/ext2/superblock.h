@@ -54,8 +54,22 @@ struct niu_ext2_superblock
 	@param niu_ext2_superblock A pointer to the superblock struct
 	expected to be filled.
 
-	@returns On error returns a negative number.
+	@returns On success returns 0.
+
+	@returns
+	-1: Invalid arguments.<br/>
+	-2: Ext2 block structure not identified.
 */
 
 int niu_ext2_get_superblock(struct niu_ext2_superblock *, uchar const *mem);
+
+/*!	@brief Check if the superblock struct is well formed.
+
+	"Well formed" don't means "reliable".
+
+	@returns On success returns 0.
+	@returns On error returns a negative number.
+*/
+
+int niu_ext2_check_superblock(struct niu_ext2_superblock const *);
 

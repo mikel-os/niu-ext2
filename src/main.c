@@ -126,7 +126,7 @@ int main()
 	block.s_def_resgid);
 
 	if(errcode != 0){
-		fprintf(stderr, "No se obtuvo el superbloque\n");
+		fprintf(stderr, "No se obtuvo el superbloque: %d\n", errcode);
 		return 1;
 	}
 
