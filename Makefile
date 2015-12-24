@@ -18,27 +18,35 @@ TARGET_DIR=./build
 TARGETS=$(addprefix $(TARGET_DIR)/, $(TARGETS_NAMES))
 OBJS=$(addprefix $(OBJ)/, $(addsuffix .o, $(OBJS_NAMES)))
 
-all: $(TARGETS)
+build: $(TARGETS)
 
 clean:
 	rm -vf $(OBJ)/*.o
+
+rebuild: clean build
 
 nuke: clean
 	rm -vf $(TARGET_DIR)/lib*.a
 	rm -vf $(TARGET_DIR)/*.elf
 
+nukerebuild: nuke build
+
 help:
 	@echo "To do"
 
 # This pair of rules and the FILE variable are temporal, don't worry about them.
-run: $(TARGET_DIR)/ext2.elf
+launch: $(TARGET_DIR)/ext2.elf
 	$< < $(FILE)
+
+all: rebuild launch
+
+nukefirst: nukerebuild lauch
 
 debug: $(TARGET_DIR)/ext2.elf
 	gdb $<
 
-.PHONY: all clean nuke help
-.PHONY: run debug
+.PHONY: build rebuild clean nuke nukebuild help
+.PHONY: launch all nukefirst debug
 
 $(TARGET_DIR)/ext2.elf: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^

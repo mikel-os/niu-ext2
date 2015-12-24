@@ -14,35 +14,37 @@
 	flushed again to the format.
 
 	Don't forget the superblock is little-endian.
+	When "long" is used stores a 4-byte value.
+	When "short" is used stores a 2-byte value.
 */
 
 struct niu_ext2_superblock
 {
-	atleast4 s_inodes_count;
-	atleast4 s_blocks_count;
-	atleast4 s_r_blocks_count;
-	atleast4 s_free_blocks_count;
-	atleast4 s_free_inodes_count;
-	atleast4 s_first_data_block;
-	atleast4 s_log_block_size;
-	atleast4 s_log_frag_size;
-	atleast4 s_blocks_per_group;
-	atleast4 s_frags_per_group;
-	atleast4 s_inodes_per_group;
-	time_t /* atleast4 */ s_mtime;
-	time_t /* atleast4 */ s_wtime;
-	ushort   s_mnt_count;
-	ushort   s_max_mnt_count;
-	ushort   s_magic;
-	ushort   s_state;
-	ushort   s_errors;
-	ushort   s_minor_rev_level;
-	time_t /* atleast4 */ s_lastcheck;
-	time_t /* atleast4 */ s_checkinterval;
-	atleast4 s_creator_os;
-	atleast4 s_rev_level;
-	ushort   s_def_resuid;
-	ushort   s_def_resgid;
+	ulong	s_inodes_count;
+	ulong	s_blocks_count;
+	ulong	s_r_blocks_count;
+	ulong	s_free_blocks_count;
+	ulong	s_free_inodes_count;
+	ulong	s_first_data_block;
+	ulong	s_log_block_size;
+	long	s_log_frag_size;
+	ulong	s_blocks_per_group;
+	ulong	s_frags_per_group;
+	ulong	s_inodes_per_group;
+	time_t	s_mtime; /* 4 bytes */
+	time_t	s_wtime; /* 4 bytes */
+	ushort	s_mnt_count;
+	short	s_max_mnt_count;
+	ushort	s_magic;
+	ushort	s_state;
+	ushort	s_errors;
+	ushort	s_minor_rev_level;
+	time_t	s_lastcheck; /* 4 bytes */
+	time_t	s_checkinterval; /* 4 bytes */
+	ulong	s_creator_os;
+	ulong	s_rev_level;
+	short	s_def_resuid;
+	short	s_def_resgid;
 };
 
 /*!	@brief Fills a struct that represents a superblock from one located
