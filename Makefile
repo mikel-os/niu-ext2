@@ -6,7 +6,7 @@
 
 CC=gcc
 TARGETS_NAMES=ext2.elf
-OBJS_NAMES=main superblock
+OBJS_NAMES=main superblock system/field
 FILE=filedumps/superblocks/sfa
 DEBUG=-g
 CFLAGS=-Wall -Wextra
