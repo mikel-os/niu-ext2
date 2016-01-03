@@ -56,13 +56,15 @@ int main()
 	strftime(lastcheck_str, sizeof(lastcheck_str)
 	, "%a, %d %b %Y %T %z", &epoch);
 
-	interval = block.s_lastcheck + (time_t) 42686148;
+	if(block.s_checkinterval == 0){
+		interval = block.s_lastcheck + block.s_checkinterval;
 
-	tm_ptr = localtime(&interval);
-	epoch = *tm_ptr;
+		tm_ptr = localtime(&interval);
+		epoch = *tm_ptr;
 
-	strftime(checkinterval_str, sizeof(checkinterval_str)
-	, "%a, %d %b %Y %T %z", &epoch);
+		strftime(checkinterval_str, sizeof(checkinterval_str)
+		, "%a, %d %b %Y %T %z", &epoch);
+	}
 
 	printf(
 	"inodes %lu\n"
@@ -80,7 +82,7 @@ int main()
 	"last write time %s\n"
 
 	"Mounted %u times from last fs full check\n"
-	"(Max times allowed: %d)\n"
+	"(Max times allowed: %d, negative means \"disabled\")\n"
 	"EXT2_SUPER_MAGIC 0xEF53 == %x\n"
 	"%u (Valid = 1, Error = 0)\n"
 	"%u (On error: Continue = 1, Remnt RO = 2, Panic! = 3)\n"
@@ -117,7 +119,7 @@ int main()
 	block.s_minor_rev_level,
 
 	lastcheck_str,
-	checkinterval_str,
+	(block.s_checkinterval != 0)? checkinterval_str: "disabled",
 	block.s_creator_os,
 	block.s_rev_level,
 
