@@ -57,8 +57,7 @@ niu_ext2_check_superblock(struct niu_ext2_superblock const *block)
 	/* inodes count depends on block groups */
 	/* the same for blocks count */
 	if(block->s_free_blocks_count < block->s_r_blocks_count) return -1;
-	if(block->s_log_block_size == 0) return -1;
-	if(block->s_log_block_size == 1){
+	if(block->s_log_block_size == 0){
 		if(block->s_first_data_block != 1) return -1;
 	}else{
 		if(block->s_first_data_block != 0) return -1;
