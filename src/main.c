@@ -2,7 +2,9 @@
 #include <time.h>
 #include "system/u.h"
 #include "niu/ext2/superblock.h"
+#include "niu/ext2/block_group_descriptor.h"
 #include "system/macros.h"
+#include "system/math.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -10,11 +12,14 @@
 
 int main()
 {
+	ulong i;
+	int index;
 	int errcode;
 	ssize_t bytes;
 
 	struct niu_ext2_superblock block;
-	uchar memory[1024];
+	struct niu_ext2_bgd descriptor;
+	uchar memory[2048];
 	char mtime_str[50];
 	char wtime_str[50];
 	char lastcheck_str[50];
@@ -25,16 +30,19 @@ int main()
 	struct tm *tm_ptr;
 	struct tm epoch;
 
-	bytes = read(STDIN_FILENO, memory, 1024);
+	/* FIXME
+	This code expect read the superblock and the bgdt concatenated.
+	*/
+	bytes = read(STDIN_FILENO, memory, 2048);
 	if(bytes < 0){
 		errcode = errno;
 		fprintf(stderr, "%s\n", strerror(errcode));
 		return errcode;
 	}
 
-	if(bytes != 1024){
+	if(bytes != 2048){
 		fprintf(stderr, "Tamaño de entrada incorrecto "
-		"(%zd, %d expected)\n", bytes, 1024);
+		"(%zd, %d expected)\n", bytes, 2048);
 		return 1;
 	}
 
@@ -129,6 +137,53 @@ int main()
 	if(errcode != 0){
 		fprintf(stderr, "No se obtuvo el superbloque: %d\n", errcode);
 		return 1;
+	}
+
+	ulong const
+	bg_count = DIV_ROUNDED_UP(block.s_blocks_count,
+	                          block.s_blocks_per_group);
+	ulong const
+	bg_count_check = DIV_ROUNDED_UP(block.s_inodes_count,
+	                                block.s_inodes_per_group);
+
+	if(bg_count != bg_count_check){
+		fprintf(stderr, "Número de bloques inconsistente %lu != %lu\n",
+		        bg_count, bg_count_check);
+		return -1;
+	}
+
+	printf("Número de bloques %lu\n", bg_count);
+
+	index = 1024;
+	for(i = 0; i < bg_count; i++){
+		if(niu_ext2_get_bgd(&descriptor, &memory[index])){
+			fprintf(stderr, "Error en el descriptor %lu\n", i);
+			return -1;
+		}
+
+		index += BGD_SIZE;
+
+		printf("\tGrupo de bloques %lu\n", i);
+		printf(
+		"Pointer to the blocks bitmap block %lu\n"
+		"Pointer to the inodes bitmap block %lu\n"
+		"Pointer to the inode table first block %lu\n"
+		"Free blocks count %u\n"
+		"Free inodes count %u\n"
+		"Inodes allocated to directories count %u\n"
+		"Padding %u\n"
+		"(Unused %lu.%lu.%lu)\n",
+		descriptor.bg_block_bitmap,
+		descriptor.bg_inode_bitmap,
+		descriptor.bg_inode_table,
+		descriptor.bg_free_blocks_count,
+		descriptor.bg_free_inodes_count,
+		descriptor.bg_used_dirs_count,
+		descriptor.bg_pad,
+		descriptor.bg_reserved[0],
+		descriptor.bg_reserved[1],
+		descriptor.bg_reserved[2]
+		);
 	}
 
 	return 0;

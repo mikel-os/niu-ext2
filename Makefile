@@ -6,8 +6,8 @@
 
 CC=gcc
 TARGETS_NAMES=ext2.elf
-OBJS_NAMES=main superblock system/field
-FILE=filedumps/superblocks/sfa
+OBJS_NAMES=main superblock block_group_descriptor system/field
+FILES=filedumps/superblocks/sfa filedumps/bgdt/sfa
 DEBUG=-g
 CFLAGS=-Wall -Wextra
 
@@ -34,9 +34,9 @@ nukerebuild: nuke build
 help:
 	@echo "To do"
 
-# This pair of rules and the FILE variable are temporal, don't worry about them.
+# This pair of rules and the FILES variable are temporal, don't worry about them.
 launch: $(TARGET_DIR)/ext2.elf
-	$< < $(FILE)
+	cat $(FILES) | $<
 
 all: rebuild launch
 
